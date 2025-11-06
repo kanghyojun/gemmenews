@@ -6,6 +6,16 @@ This file provides guidance to AI agents when working with code in this reposito
 
 This is a news aggregation system built with SolidStart that crawls and collects articles from multiple news sources. It features a web crawler for extracting content, PostgreSQL database storage via Drizzle ORM, and a SolidJS frontend with session-based authentication.
 
+## Before Starting Work
+
+**Important**: Always sync the git submodule before starting work:
+
+```bash
+git submodule update --init --recursive
+```
+
+This ensures you have the latest product documentation from `product-docs/` submodule (gemmenews-docs repository).
+
 ## Essential Commands
 
 ### Development
