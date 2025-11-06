@@ -18,6 +18,12 @@ This is a news aggregation system built with SolidStart that crawls and collects
 - `pnpm test:ui` - Run tests with UI
 - `pnpm test:run` - Run tests once (CI mode)
 
+### Linting
+- `pnpm lint` - Check code for linting errors
+- `pnpm lint:fix` - Automatically fix linting errors
+
+**Important**: Before committing code, always run `pnpm lint` to ensure code passes all linting checks. All code must pass linting without errors.
+
 ### Database Operations
 - `pnpm db:generate` - Generate migration files from schema changes
 - `pnpm db:migrate` - Apply migrations to database
@@ -34,6 +40,7 @@ This is a news aggregation system built with SolidStart that crawls and collects
 - **Database**: PostgreSQL with Drizzle ORM
 - **Web Crawler**: Cheerio for HTML parsing
 - **Testing**: Vitest with happy-dom
+- **Linting**: ESLint with TypeScript and SolidJS plugins
 
 ### Directory Structure
 ```
