@@ -39,7 +39,7 @@ export async function loginOrRegister(formData: FormData) {
   const username = String(formData.get("username"));
   const password = String(formData.get("password"));
   const loginType = String(formData.get("loginType"));
-  let error = validateUsername(username) || validatePassword(password);
+  const error = validateUsername(username) || validatePassword(password);
   if (error) return new Error(error);
 
   try {
