@@ -20,6 +20,9 @@ importers:
       '@solidjs/start':
         specifier: ^1.1.0
         version: 1.2.0(solid-js@1.9.10)(vinxi@0.5.8(@types/node@24.10.0)(db0@0.3.4(drizzle-orm@1.0.0-beta.1-dfa4db3(@types/pg@8.15.6)(pg@8.16.3)))(drizzle-orm@1.0.0-beta.1-dfa4db3(@types/pg@8.15.6)(pg@8.16.3))(ioredis@5.8.2)(jiti@2.6.1)(terser@5.44.1))(vite@7.2.1(@types/node@24.10.0)(jiti@2.6.1)(terser@5.44.1))
+      dotenv:
+        specifier: ^17.2.3
+        version: 17.2.3
       drizzle-orm:
         specifier: 1.0.0-beta.1-dfa4db3
         version: 1.0.0-beta.1-dfa4db3(@types/pg@8.15.6)(pg@8.16.3)

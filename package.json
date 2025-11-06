@@ -35,6 +35,7 @@
     "@pothos/plugin-drizzle": "^0.10.0",
     "@solidjs/router": "^0.15.0",
     "@solidjs/start": "^1.1.0",
+    "dotenv": "^17.2.3",
     "drizzle-orm": "1.0.0-beta.1-dfa4db3",
     "graphql": "^16.9.0",
     "pg": "^8.13.1",
