@@ -133,7 +133,7 @@ export class Crawler {
    */
   private executeSelectorPath(
     $: cheerio.CheerioAPI,
-    $element: cheerio.Cheerio<cheerio.Element>,
+    $element: cheerio.Cheerio,
     path: SelectorPath,
   ): string {
     // 체인 메서드를 파싱

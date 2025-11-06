@@ -5,7 +5,7 @@ describe("Database Schema", () => {
   describe("Users Table", () => {
     it("should have correct table name", () => {
       expect(Users).toBeDefined();
-      expect(Users[Symbol.for("drizzle:Name")]).toBe("users");
+      expect((Users as any)[Symbol.for("drizzle:Name")]).toBe("users");
     });
 
     it("should have required columns", () => {
@@ -19,7 +19,9 @@ describe("Database Schema", () => {
   describe("NewsSources Table", () => {
     it("should have correct table name", () => {
       expect(NewsSources).toBeDefined();
-      expect(NewsSources[Symbol.for("drizzle:Name")]).toBe("news_sources");
+      expect((NewsSources as any)[Symbol.for("drizzle:Name")]).toBe(
+        "news_sources",
+      );
     });
 
     it("should have required columns", () => {
@@ -38,7 +40,7 @@ describe("Database Schema", () => {
   describe("Articles Table", () => {
     it("should have correct table name", () => {
       expect(Articles).toBeDefined();
-      expect(Articles[Symbol.for("drizzle:Name")]).toBe("articles");
+      expect((Articles as any)[Symbol.for("drizzle:Name")]).toBe("articles");
     });
 
     it("should have required columns", () => {
@@ -49,7 +51,7 @@ describe("Database Schema", () => {
       expect(columns).toContain("url");
       expect(columns).toContain("content");
       expect(columns).toContain("originalPublishedAt");
-      expect(columns).toContain("collectedAt");
+      expect(columns).toContain("collectionLogId");
       expect(columns).toContain("createdAt");
     });
   });
@@ -57,7 +59,7 @@ describe("Database Schema", () => {
   describe("CollectionLogs Table", () => {
     it("should have correct table name", () => {
       expect(CollectionLogs).toBeDefined();
-      expect(CollectionLogs[Symbol.for("drizzle:Name")]).toBe(
+      expect((CollectionLogs as any)[Symbol.for("drizzle:Name")]).toBe(
         "collection_logs",
       );
     });
@@ -85,10 +87,10 @@ describe("Database Schema", () => {
 
     it("should have unique table names", () => {
       const tableNames = [
-        Users[Symbol.for("drizzle:Name")],
-        NewsSources[Symbol.for("drizzle:Name")],
-        Articles[Symbol.for("drizzle:Name")],
-        CollectionLogs[Symbol.for("drizzle:Name")],
+        (Users as any)[Symbol.for("drizzle:Name")],
+        (NewsSources as any)[Symbol.for("drizzle:Name")],
+        (Articles as any)[Symbol.for("drizzle:Name")],
+        (CollectionLogs as any)[Symbol.for("drizzle:Name")],
       ];
 
       const uniqueNames = new Set(tableNames);
@@ -98,7 +100,6 @@ describe("Database Schema", () => {
 
   describe("Timezone Support", () => {
     it("should use timestamptz for Articles timestamp columns", () => {
-      const collectedAtColumn = Articles.collectedAt;
       const createdAtColumn = Articles.createdAt;
       const originalPublishedAtColumn = Articles.originalPublishedAt;
 
@@ -106,7 +107,6 @@ describe("Database Schema", () => {
       expect(originalPublishedAtColumn).toBeDefined();
 
       // Verify columns use timezone-aware timestamps
-      expect(collectedAtColumn.columnType).toBe("PgTimestamp");
       expect(createdAtColumn.columnType).toBe("PgTimestamp");
       expect(originalPublishedAtColumn.columnType).toBe("PgTimestamp");
     });
