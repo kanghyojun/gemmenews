@@ -15,8 +15,8 @@ export const NewsSources = pgTable("news_sources", {
   // CSS 선택자 및 기타 설정을 JSON으로 저장
   config: jsonb("config").notNull(), // { listPageSelector: {...}, detailPageSelector: {...} }
   isActive: boolean("is_active").notNull().default(true),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 // 수집된 기사
@@ -28,19 +28,19 @@ export const Articles = pgTable("articles", {
   title: text("title").notNull(),
   url: text("url").notNull().unique(), // 중복 방지
   content: text("content"), // 본문 내용
-  originalPublishedAt: timestamp("original_published_at"), // 원본 게시일 (옵션)
-  collectedAt: timestamp("collected_at").notNull().defaultNow(),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  originalPublishedAt: timestamp("original_published_at", { withTimezone: true }), // 원본 게시일 (옵션)
+  collectedAt: timestamp("collected_at", { withTimezone: true }).notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
 // 수집 로그
 export const CollectionLogs = pgTable("collection_logs", {
   id: serial("id").primaryKey(),
   sourceId: integer("source_id").references(() => NewsSources.id), // null이면 전체 수집
-  startedAt: timestamp("started_at").notNull().defaultNow(),
-  completedAt: timestamp("completed_at"),
+  startedAt: timestamp("started_at", { withTimezone: true }).notNull().defaultNow(),
+  completedAt: timestamp("completed_at", { withTimezone: true }),
   status: text("status").notNull().default("in_progress"), // in_progress, success, failed
   articlesCollected: integer("articles_collected").notNull().default(0),
   errorMessage: text("error_message"),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
+  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

@@ -101,4 +101,57 @@ describe('Database Schema', () => {
       expect(uniqueNames.size).toBe(4);
     });
   });
+
+  describe('Timezone Support', () => {
+    it('should use timestamptz for Articles timestamp columns', () => {
+      // @ts-ignore - accessing internal column configuration
+      const collectedAtColumn = Articles.collectedAt;
+      const createdAtColumn = Articles.createdAt;
+      const originalPublishedAtColumn = Articles.originalPublishedAt;
+
+      expect(collectedAtColumn).toBeDefined();
+      expect(createdAtColumn).toBeDefined();
+      expect(originalPublishedAtColumn).toBeDefined();
+
+      // Verify columns use timezone-aware timestamps
+      // @ts-ignore
+      expect(collectedAtColumn.columnType).toBe('PgTimestamp');
+      // @ts-ignore
+      expect(createdAtColumn.columnType).toBe('PgTimestamp');
+      // @ts-ignore
+      expect(originalPublishedAtColumn.columnType).toBe('PgTimestamp');
+    });
+
+    it('should use timestamptz for NewsSources timestamp columns', () => {
+      // @ts-ignore - accessing internal column configuration
+      const createdAtColumn = NewsSources.createdAt;
+      const updatedAtColumn = NewsSources.updatedAt;
+
+      expect(createdAtColumn).toBeDefined();
+      expect(updatedAtColumn).toBeDefined();
+
+      // @ts-ignore
+      expect(createdAtColumn.columnType).toBe('PgTimestamp');
+      // @ts-ignore
+      expect(updatedAtColumn.columnType).toBe('PgTimestamp');
+    });
+
+    it('should use timestamptz for CollectionLogs timestamp columns', () => {
+      // @ts-ignore - accessing internal column configuration
+      const startedAtColumn = CollectionLogs.startedAt;
+      const completedAtColumn = CollectionLogs.completedAt;
+      const createdAtColumn = CollectionLogs.createdAt;
+
+      expect(startedAtColumn).toBeDefined();
+      expect(completedAtColumn).toBeDefined();
+      expect(createdAtColumn).toBeDefined();
+
+      // @ts-ignore
+      expect(startedAtColumn.columnType).toBe('PgTimestamp');
+      // @ts-ignore
+      expect(completedAtColumn.columnType).toBe('PgTimestamp');
+      // @ts-ignore
+      expect(createdAtColumn.columnType).toBe('PgTimestamp');
+    });
+  });
 });
