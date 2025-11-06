@@ -1,0 +1,3 @@
+[submodule "product-docs"]
+	path = product-docs
+	url = git@github.com:kanghyojun/gemmenews-docs.git

@@ -1,0 +1,32 @@
+{
+  "name": "example-with-drizzle",
+  "type": "module",
+  "scripts": {
+    "dev": "vinxi dev",
+    "build": "vinxi build",
+    "start": "vinxi start",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "db:studio": "drizzle-kit studio"
+  },
+  "devDependencies": {
+    "@types/node": "^24.7.0",
+    "@types/pg": "^8.11.10",
+    "drizzle-kit": "^0.31.0"
+  },
+  "dependencies": {
+    "@pothos/core": "^4.3.0",
+    "@pothos/plugin-drizzle": "^0.10.0",
+    "@solidjs/router": "^0.15.0",
+    "@solidjs/start": "^1.1.0",
+    "drizzle-orm": "1.0.0-beta.1-dfa4db3",
+    "graphql": "^16.9.0",
+    "pg": "^8.13.1",
+    "solid-js": "^1.9.5",
+    "vinxi": "^0.5.7"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
