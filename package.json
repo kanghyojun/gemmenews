@@ -38,6 +38,7 @@
     "dotenv": "^17.2.3",
     "drizzle-orm": "1.0.0-beta.1-dfa4db3",
     "graphql": "^16.9.0",
+    "graphql-yoga": "^5.16.1",
     "pg": "^8.13.1",
     "solid-js": "^1.9.5",
     "vinxi": "^0.5.7"
