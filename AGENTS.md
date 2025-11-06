@@ -24,6 +24,11 @@ This is a news aggregation system built with SolidStart that crawls and collects
 
 **Important**: Before committing code, always run `pnpm lint` to ensure code passes all linting checks. All code must pass linting without errors.
 
+### Type Checking
+- `pnpm typecheck` - Run TypeScript type checking
+
+**Important**: Before committing code, always run `pnpm typecheck` to ensure there are no type errors. All code must pass type checking without errors.
+
 ### Database Operations
 - `pnpm db:generate` - Generate migration files from schema changes
 - `pnpm db:migrate` - Apply migrations to database
@@ -97,5 +102,9 @@ This design allows adding new news sources by configuring selectors without code
 - Node.js >= 20 required
 - Package manager: pnpm (lockfile committed to git)
 - Drizzle ORM uses `drizzle-orm/node-postgres` dialect
+  - Note: PostgreSQL queries return arrays, not single objects
+  - Use `await db.select()...` and access first element with `[0]`
+  - Do NOT use `.get()` method (not available in PostgreSQL dialect)
 - Test environment uses `happy-dom` for DOM simulation
 - Path aliases: `~` for `src/`, `@` for `drizzle/` (configured in vitest.config.ts)
+- TypeScript: `skipLibCheck: true` to avoid external library type errors

@@ -12,9 +12,12 @@
     "noEmit": true,
     "types": ["vinxi/types/client", "node"],
     "isolatedModules": true,
+    "skipLibCheck": true,
     "paths": {
       "~/*": ["./src/*"],
       "@/*": ["./drizzle/*"]
     }
-  }
+  },
+  "include": ["src/**/*", "drizzle/schema.ts", "drizzle/schema.test.ts"],
+  "exclude": ["node_modules", "dist", ".output", ".vinxi"]
 }
