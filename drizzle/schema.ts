@@ -25,11 +25,13 @@ export const Articles = pgTable("articles", {
   sourceId: integer("source_id")
     .notNull()
     .references(() => NewsSources.id),
+  collectionLogId: integer("collection_log_id")
+    .notNull()
+    .references(() => CollectionLogs.id),
   title: text("title").notNull(),
   url: text("url").notNull().unique(), // 중복 방지
   content: text("content"), // 본문 내용
   originalPublishedAt: timestamp("original_published_at", { withTimezone: true }), // 원본 게시일 (옵션)
-  collectedAt: timestamp("collected_at", { withTimezone: true }).notNull().defaultNow(),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });
 
@@ -40,7 +42,6 @@ export const CollectionLogs = pgTable("collection_logs", {
   startedAt: timestamp("started_at", { withTimezone: true }).notNull().defaultNow(),
   completedAt: timestamp("completed_at", { withTimezone: true }),
   status: text("status").notNull().default("in_progress"), // in_progress, success, failed
-  articlesCollected: integer("articles_collected").notNull().default(0),
   errorMessage: text("error_message"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
 });

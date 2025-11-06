@@ -48,11 +48,11 @@ describe('Database Schema', () => {
       const columns = Object.keys(Articles);
       expect(columns).toContain('id');
       expect(columns).toContain('sourceId');
+      expect(columns).toContain('collectionLogId');
       expect(columns).toContain('title');
       expect(columns).toContain('url');
       expect(columns).toContain('content');
       expect(columns).toContain('originalPublishedAt');
-      expect(columns).toContain('collectedAt');
       expect(columns).toContain('createdAt');
     });
   });
@@ -71,7 +71,6 @@ describe('Database Schema', () => {
       expect(columns).toContain('startedAt');
       expect(columns).toContain('completedAt');
       expect(columns).toContain('status');
-      expect(columns).toContain('articlesCollected');
       expect(columns).toContain('errorMessage');
       expect(columns).toContain('createdAt');
     });
@@ -105,17 +104,13 @@ describe('Database Schema', () => {
   describe('Timezone Support', () => {
     it('should use timestamptz for Articles timestamp columns', () => {
       // @ts-ignore - accessing internal column configuration
-      const collectedAtColumn = Articles.collectedAt;
       const createdAtColumn = Articles.createdAt;
       const originalPublishedAtColumn = Articles.originalPublishedAt;
 
-      expect(collectedAtColumn).toBeDefined();
       expect(createdAtColumn).toBeDefined();
       expect(originalPublishedAtColumn).toBeDefined();
 
       // Verify columns use timezone-aware timestamps
-      // @ts-ignore
-      expect(collectedAtColumn.columnType).toBe('PgTimestamp');
       // @ts-ignore
       expect(createdAtColumn.columnType).toBe('PgTimestamp');
       // @ts-ignore

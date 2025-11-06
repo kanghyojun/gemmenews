@@ -85,7 +85,6 @@ export async function collectNews(): Promise<CollectionResult[]> {
             sourceId: source.id,
             startedAt: now,
             status: 'in_progress',
-            articlesCollected: 0,
           })
           .returning()
       )
@@ -145,9 +144,9 @@ export async function collectNews(): Promise<CollectionResult[]> {
             // 새 기사 등록
             await db.insert(Articles).values({
               sourceId: source.id,
+              collectionLogId: logId,
               title: item.title,
               url: item.url,
-              collectedAt: new Date(),
             });
 
             successCount++;
@@ -170,7 +169,6 @@ export async function collectNews(): Promise<CollectionResult[]> {
           .set({
             completedAt: new Date(),
             status: 'success',
-            articlesCollected: successCount,
           })
           .where(eq(CollectionLogs.id, logId));
 

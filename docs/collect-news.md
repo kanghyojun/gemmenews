@@ -68,12 +68,15 @@ interface CollectionResult {
 │    ├─ Crawler 클래스로 기사 목록 가져오기                     │
 │    ├─ 각 기사의 URL 중복 체크                               │
 │    └─ 중복되지 않은 기사만 articles 테이블에 저장              │
+│       (collection_log_id 포함)                           │
 └─────────────────────────────────────────────────────────┘
                           ↓
 ┌─────────────────────────────────────────────────────────┐
 │ 5. collection_logs 업데이트                              │
-│    ├─ 성공: completed_at, status='success', articles_collected │
+│    ├─ 성공: completed_at, status='success'                  │
 │    └─ 실패: completed_at, status='failed', error_message     │
+│                                                             │
+│    * 수집된 기사 수는 articles.collection_log_id로 조회 가능   │
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -132,10 +135,10 @@ CREATE TABLE news_sources (
 CREATE TABLE articles (
   id SERIAL PRIMARY KEY,
   source_id INTEGER REFERENCES news_sources(id),
+  collection_log_id INTEGER REFERENCES collection_logs(id),  -- 어느 수집 작업에서 가져왔는지 추적
   title TEXT NOT NULL,
   url TEXT UNIQUE NOT NULL,   -- URL 중복 방지
   content TEXT,
-  collected_at TIMESTAMPTZ DEFAULT NOW(),
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
 ```
@@ -149,10 +152,12 @@ CREATE TABLE collection_logs (
   started_at TIMESTAMPTZ DEFAULT NOW(),
   completed_at TIMESTAMPTZ,
   status TEXT DEFAULT 'in_progress',  -- in_progress, success, failed
-  articles_collected INTEGER DEFAULT 0,
   error_message TEXT,
   created_at TIMESTAMPTZ DEFAULT NOW()
 );
+
+-- 수집된 기사 수는 articles 테이블과 JOIN으로 계산
+-- SELECT COUNT(*) FROM articles WHERE collection_log_id = ?
 ```
 
 ## 실전 예제
