@@ -18,20 +18,32 @@ function validatePassword(password: unknown) {
 }
 
 async function login(username: string, password: string) {
-  const user = db.select().from(Users).where(eq(Users.username, username)).get();
+  const users = await db
+    .select()
+    .from(Users)
+    .where(eq(Users.username, username));
+  const user = users[0];
   if (!user || password !== user.password) throw new Error("Invalid login");
   return user;
 }
 
 async function register(username: string, password: string) {
-  const existingUser = db.select().from(Users).where(eq(Users.username, username)).get();
-  if (existingUser) throw new Error("User already exists");
-  return db.insert(Users).values({ username, password }).returning().get();
+  const existingUsers = await db
+    .select()
+    .from(Users)
+    .where(eq(Users.username, username));
+  if (existingUsers.length > 0) throw new Error("User already exists");
+  const result = await db
+    .insert(Users)
+    .values({ username, password })
+    .returning();
+  return result[0];
 }
 
 function getSession() {
   return useSession({
-    password: process.env.SESSION_SECRET ?? "areallylongsecretthatyoushouldreplace"
+    password:
+      process.env.SESSION_SECRET ?? "areallylongsecretthatyoushouldreplace",
   });
 }
 
@@ -47,7 +59,7 @@ export async function loginOrRegister(formData: FormData) {
       ? register(username, password)
       : login(username, password));
     const session = await getSession();
-    await session.update(d => {
+    await session.update((d) => {
       d.userId = user.id;
     });
   } catch (err) {
@@ -58,7 +70,7 @@ export async function loginOrRegister(formData: FormData) {
 
 export async function logout() {
   const session = await getSession();
-  await session.update(d => (d.userId = undefined));
+  await session.update((d) => (d.userId = undefined));
   throw redirect("/login");
 }
 
@@ -68,7 +80,8 @@ export async function getUser() {
   if (userId === undefined) throw redirect("/login");
 
   try {
-    const user = db.select().from(Users).where(eq(Users.id, userId)).get();
+    const users = await db.select().from(Users).where(eq(Users.id, userId));
+    const user = users[0];
     if (!user) throw redirect("/login");
     return { id: user.id, username: user.username };
   } catch {
