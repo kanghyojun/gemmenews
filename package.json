@@ -5,15 +5,22 @@
     "dev": "vinxi dev",
     "build": "vinxi build",
     "start": "vinxi start",
+    "test": "vitest",
+    "test:ui": "vitest --ui",
+    "test:run": "vitest run",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio"
   },
   "devDependencies": {
+    "@types/cheerio": "^0.22.35",
     "@types/node": "^24.7.0",
     "@types/pg": "^8.11.10",
-    "drizzle-kit": "^0.31.0"
+    "cheerio": "^1.1.2",
+    "drizzle-kit": "^0.31.0",
+    "happy-dom": "^20.0.10",
+    "vitest": "^4.0.7"
   },
   "dependencies": {
     "@pothos/core": "^4.3.0",
