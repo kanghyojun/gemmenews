@@ -1,6 +1,7 @@
-import SchemaBuilder from '@pothos/core';
-import DrizzlePlugin from '@pothos/plugin-drizzle';
-import { db } from '../api/db';
+import SchemaBuilder from "@pothos/core";
+import DrizzlePlugin from "@pothos/plugin-drizzle";
+import { db } from "../lib/db";
+import { getTableConfig } from "drizzle-orm/pg-core";
 
 /**
  * Pothos Schema Builder 설정
@@ -11,14 +12,15 @@ export const builder = new SchemaBuilder({
   plugins: [DrizzlePlugin],
   drizzle: {
     client: db,
+    getTableConfig,
   },
 });
 
 // 기본 Query와 Mutation 타입 정의
 builder.queryType({
-  description: 'Root Query',
+  description: "Root Query",
 });
 
 builder.mutationType({
-  description: 'Root Mutation',
+  description: "Root Mutation",
 });

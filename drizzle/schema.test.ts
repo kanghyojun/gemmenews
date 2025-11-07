@@ -1,11 +1,12 @@
 import { describe, it, expect } from "vitest";
+import { getTableConfig } from "drizzle-orm/pg-core";
 import { Users, NewsSources, Articles, CollectionLogs } from "./schema";
 
 describe("Database Schema", () => {
   describe("Users Table", () => {
     it("should have correct table name", () => {
       expect(Users).toBeDefined();
-      expect((Users as any)[Symbol.for("drizzle:Name")]).toBe("users");
+      expect(getTableConfig(Users).name).toBe("users");
     });
 
     it("should have required columns", () => {
@@ -19,9 +20,7 @@ describe("Database Schema", () => {
   describe("NewsSources Table", () => {
     it("should have correct table name", () => {
       expect(NewsSources).toBeDefined();
-      expect((NewsSources as any)[Symbol.for("drizzle:Name")]).toBe(
-        "news_sources",
-      );
+      expect(getTableConfig(NewsSources).name).toBe("news_sources");
     });
 
     it("should have required columns", () => {
@@ -40,7 +39,7 @@ describe("Database Schema", () => {
   describe("Articles Table", () => {
     it("should have correct table name", () => {
       expect(Articles).toBeDefined();
-      expect((Articles as any)[Symbol.for("drizzle:Name")]).toBe("articles");
+      expect(getTableConfig(Articles).name).toBe("articles");
     });
 
     it("should have required columns", () => {
@@ -59,9 +58,7 @@ describe("Database Schema", () => {
   describe("CollectionLogs Table", () => {
     it("should have correct table name", () => {
       expect(CollectionLogs).toBeDefined();
-      expect((CollectionLogs as any)[Symbol.for("drizzle:Name")]).toBe(
-        "collection_logs",
-      );
+      expect(getTableConfig(CollectionLogs).name).toBe("collection_logs");
     });
 
     it("should have required columns", () => {
@@ -86,10 +83,10 @@ describe("Database Schema", () => {
 
     it("should have unique table names", () => {
       const tableNames = [
-        (Users as any)[Symbol.for("drizzle:Name")],
-        (NewsSources as any)[Symbol.for("drizzle:Name")],
-        (Articles as any)[Symbol.for("drizzle:Name")],
-        (CollectionLogs as any)[Symbol.for("drizzle:Name")],
+        getTableConfig(Users).name,
+        getTableConfig(NewsSources).name,
+        getTableConfig(Articles).name,
+        getTableConfig(CollectionLogs).name,
       ];
 
       const uniqueNames = new Set(tableNames);

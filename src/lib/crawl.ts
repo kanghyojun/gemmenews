@@ -78,16 +78,8 @@ export class Crawler {
 
         try {
           // 관계형 선택자로 title과 url 추출
-          const title = this.executeSelectorPath(
-            $,
-            $item,
-            this.config.itemRelations.title,
-          );
-          const link = this.executeSelectorPath(
-            $,
-            $item,
-            this.config.itemRelations.url,
-          );
+          const title = this.executeSelectorPath($, $item, this.config.itemRelations.title);
+          const link = this.executeSelectorPath($, $item, this.config.itemRelations.url);
 
           if (title && link) {
             const url = this.normalizeUrl(link, baseUrl);
@@ -95,17 +87,13 @@ export class Crawler {
           }
         } catch (error) {
           // 개별 아이템 파싱 실패는 무시하고 계속 진행
-          console.warn(
-            `Failed to parse item: ${error instanceof Error ? error.message : String(error)}`,
-          );
+          console.warn(`Failed to parse item: ${error instanceof Error ? error.message : String(error)}`);
         }
       });
 
       return items;
     } catch (error) {
-      throw new Error(
-        `Failed to crawl list: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      throw new Error(`Failed to crawl list: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 
@@ -131,11 +119,7 @@ export class Crawler {
    * @param path 선택자 경로
    * @returns 추출된 값
    */
-  private executeSelectorPath(
-    $: cheerio.CheerioAPI,
-    $element: cheerio.Cheerio,
-    path: SelectorPath,
-  ): string {
+  private executeSelectorPath($: cheerio.CheerioAPI, $element: cheerio.Cheerio<any>, path: SelectorPath): string {
     // 체인 메서드를 파싱
     // 예: "next().find(.subline a).last().attr(href)"
     const methodRegex = /(\w+)\(([^)]*)\)/g;
@@ -230,9 +214,7 @@ export class Crawler {
 
       return content;
     } catch (error) {
-      throw new Error(
-        `Failed to get content: ${error instanceof Error ? error.message : String(error)}`,
-      );
+      throw new Error(`Failed to get content: ${error instanceof Error ? error.message : String(error)}`);
     }
   }
 }

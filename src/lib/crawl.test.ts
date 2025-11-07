@@ -2,8 +2,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Crawler } from "./crawl";
 
 // Mock fetch globally
-const mockFetch = vi.fn();
-global.fetch = mockFetch as any;
+const mockFetch = vi.fn<typeof fetch>();
+global.fetch = mockFetch;
 
 // 실제 Hacker News HTML (2025-11-06 크롤링)
 const MOCK_HN_LIST_HTML = `
@@ -47,10 +47,7 @@ describe("Crawler", () => {
 
   describe("list() - Hacker News real HTML", () => {
     it("should crawl HN with relation-based selectors (user specification)", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: async () => MOCK_HN_LIST_HTML,
-      });
+      mockFetch.mockResolvedValueOnce(new Response(MOCK_HN_LIST_HTML, { status: 200 }));
 
       const crawler = new Crawler("https://news.ycombinator.com", {
         itemSelector: "tr.athing",
@@ -88,10 +85,7 @@ describe("Crawler", () => {
         </article>
       `;
 
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: async () => mockHTML,
-      });
+      mockFetch.mockResolvedValueOnce(new Response(mockHTML, { status: 200 }));
 
       const crawler = new Crawler("https://example.com", {
         itemSelector: "article.post",
@@ -116,10 +110,7 @@ describe("Crawler", () => {
     });
 
     it("should throw error when fetch fails", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 404,
-      });
+      mockFetch.mockResolvedValueOnce(new Response(null, { status: 404 }));
 
       const crawler = new Crawler("https://example.com", {
         itemSelector: ".item",
@@ -137,19 +128,14 @@ describe("Crawler", () => {
   describe("getContent()", () => {
     it("should extract content from HN item page", async () => {
       // URL에 따라 다른 mock HTML 반환
-      mockFetch.mockImplementation((url: string) => {
+      mockFetch.mockImplementation((input: string | URL | Request) => {
+        const url = typeof input === "string" ? input : input instanceof URL ? input.href : input.url;
         if (url.includes("item?id=")) {
           // item 페이지 요청
-          return Promise.resolve({
-            ok: true,
-            text: async () => MOCK_HN_ITEM_HTML,
-          });
+          return Promise.resolve(new Response(MOCK_HN_ITEM_HTML, { status: 200 }));
         } else {
           // 목록 페이지 요청
-          return Promise.resolve({
-            ok: true,
-            text: async () => MOCK_HN_LIST_HTML,
-          });
+          return Promise.resolve(new Response(MOCK_HN_LIST_HTML, { status: 200 }));
         }
       });
 
@@ -168,10 +154,7 @@ describe("Crawler", () => {
     });
 
     it("should throw error when content not found", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: async () => "<html><body>No content</body></html>",
-      });
+      mockFetch.mockResolvedValueOnce(new Response("<html><body>No content</body></html>", { status: 200 }));
 
       const crawler = new Crawler("https://example.com", {
         itemSelector: ".item",
@@ -182,9 +165,9 @@ describe("Crawler", () => {
         contentSelector: ".content",
       });
 
-      await expect(
-        crawler.getContent("https://example.com/article"),
-      ).rejects.toThrow("Content not found with the given selector");
+      await expect(crawler.getContent("https://example.com/article")).rejects.toThrow(
+        "Content not found with the given selector",
+      );
     });
   });
 });
