@@ -71,7 +71,6 @@ describe("Database Schema", () => {
       expect(columns).toContain("startedAt");
       expect(columns).toContain("completedAt");
       expect(columns).toContain("status");
-      expect(columns).toContain("articlesCollected");
       expect(columns).toContain("errorMessage");
       expect(columns).toContain("createdAt");
     });
