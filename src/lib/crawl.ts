@@ -1,4 +1,4 @@
-import * as cheerio from 'cheerio';
+import * as cheerio from "cheerio";
 
 /**
  * 관계형 선택자 경로
@@ -78,8 +78,16 @@ export class Crawler {
 
         try {
           // 관계형 선택자로 title과 url 추출
-          const title = this.executeSelectorPath($, $item, this.config.itemRelations.title);
-          const link = this.executeSelectorPath($, $item, this.config.itemRelations.url);
+          const title = this.executeSelectorPath(
+            $,
+            $item,
+            this.config.itemRelations.title,
+          );
+          const link = this.executeSelectorPath(
+            $,
+            $item,
+            this.config.itemRelations.url,
+          );
 
           if (title && link) {
             const url = this.normalizeUrl(link, baseUrl);
@@ -87,13 +95,17 @@ export class Crawler {
           }
         } catch (error) {
           // 개별 아이템 파싱 실패는 무시하고 계속 진행
-          console.warn(`Failed to parse item: ${error instanceof Error ? error.message : String(error)}`);
+          console.warn(
+            `Failed to parse item: ${error instanceof Error ? error.message : String(error)}`,
+          );
         }
       });
 
       return items;
     } catch (error) {
-      throw new Error(`Failed to crawl list: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to crawl list: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 
@@ -119,7 +131,11 @@ export class Crawler {
    * @param path 선택자 경로
    * @returns 추출된 값
    */
-  private executeSelectorPath($: cheerio.CheerioAPI, $element: cheerio.Cheerio<any>, path: SelectorPath): string {
+  private executeSelectorPath(
+    $: cheerio.CheerioAPI,
+    $element: cheerio.Cheerio,
+    path: SelectorPath,
+  ): string {
     // 체인 메서드를 파싱
     // 예: "next().find(.subline a).last().attr(href)"
     const methodRegex = /(\w+)\(([^)]*)\)/g;
@@ -138,34 +154,34 @@ export class Crawler {
     // 각 메서드를 순차적으로 실행
     for (const method of methods) {
       switch (method.name) {
-        case 'find':
+        case "find":
           current = current.find(method.arg);
           break;
-        case 'next':
+        case "next":
           current = current.next(method.arg || undefined);
           break;
-        case 'prev':
+        case "prev":
           current = current.prev(method.arg || undefined);
           break;
-        case 'parent':
+        case "parent":
           current = current.parent(method.arg || undefined);
           break;
-        case 'closest':
+        case "closest":
           current = current.closest(method.arg);
           break;
-        case 'first':
+        case "first":
           current = current.first();
           break;
-        case 'last':
+        case "last":
           current = current.last();
           break;
-        case 'eq':
+        case "eq":
           current = current.eq(parseInt(method.arg, 10));
           break;
-        case 'text':
+        case "text":
           return current.text().trim();
-        case 'attr':
-          return current.attr(method.arg) || '';
+        case "attr":
+          return current.attr(method.arg) || "";
         default:
           throw new Error(`Unknown selector method: ${method.name}`);
       }
@@ -182,10 +198,10 @@ export class Crawler {
    * @returns 정규화된 절대 URL
    */
   private normalizeUrl(url: string, baseUrl: string): string {
-    if (url.startsWith('http://') || url.startsWith('https://')) {
+    if (url.startsWith("http://") || url.startsWith("https://")) {
       return url;
     }
-    if (url.startsWith('/')) {
+    if (url.startsWith("/")) {
       return `${baseUrl}${url}`;
     }
     return `${baseUrl}/${url}`;
@@ -209,12 +225,14 @@ export class Crawler {
       const content = $(this.config.contentSelector).text().trim();
 
       if (!content) {
-        throw new Error('Content not found with the given selector');
+        throw new Error("Content not found with the given selector");
       }
 
       return content;
     } catch (error) {
-      throw new Error(`Failed to get content: ${error instanceof Error ? error.message : String(error)}`);
+      throw new Error(
+        `Failed to get content: ${error instanceof Error ? error.message : String(error)}`,
+      );
     }
   }
 }
