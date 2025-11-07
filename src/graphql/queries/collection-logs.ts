@@ -1,7 +1,7 @@
 import { builder } from '../builder';
 import { CollectionLog } from '../types/collection-log';
-import { CollectionLogs } from '../../../drizzle/schema';
-import { db } from '../../api/db';
+import { CollectionLogs } from '@/schema';
+import { db } from '~/api/db';
 import { eq, desc } from 'drizzle-orm';
 
 /**

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { collectNews, CollectionResult } from './collect-news';
+import { collectNews } from './collect-news';
 import { db } from '../api/db';
 import { Crawler } from './crawl';
 

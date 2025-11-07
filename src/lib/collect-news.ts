@@ -1,5 +1,5 @@
 import { db } from '../api/db';
-import { NewsSources, Articles, CollectionLogs } from '../../drizzle/schema';
+import { NewsSources, Articles, CollectionLogs } from '@/schema';
 import { eq, and, gte, lt } from 'drizzle-orm';
 import { Crawler, CrawlerConfig } from './crawl';
 

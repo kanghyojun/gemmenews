@@ -1,6 +1,6 @@
 import { builder } from '../builder';
 import { CollectionResult } from '../types/collection-result';
-import { collectAllNews } from '../../services/news-collection-service';
+import { collectAllNews } from '~/services/news-collection-service';
 
 /**
  * collectNews - 뉴스 수집 뮤테이션

@@ -1,5 +1,5 @@
 import { db } from '../api/db';
-import { NewsSources, Articles, CollectionLogs } from '../../drizzle/schema';
+import { NewsSources, Articles, CollectionLogs } from '@/schema';
 import { eq } from 'drizzle-orm';
 
 /**

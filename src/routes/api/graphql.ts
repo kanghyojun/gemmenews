@@ -1,6 +1,6 @@
 import { APIEvent } from '@solidjs/start/server';
 import { createYoga } from 'graphql-yoga';
-import { schema } from '../../graphql/schema';
+import { schema } from '~/graphql/schema';
 
 /**
  * GraphQL Yoga 인스턴스 생성
