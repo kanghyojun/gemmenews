@@ -118,3 +118,16 @@ This design allows adding new news sources by configuring selectors without code
 - Test environment uses `happy-dom` for DOM simulation
 - Path aliases: `~` for `src/`, `@` for `drizzle/` (configured in vitest.config.ts)
 - TypeScript: `skipLibCheck: true` to avoid external library type errors
+
+### File Naming Convention
+
+**Use kebab-case (hyphen-separated) for all file names**:
+- ✅ Good: `news-collection-service.ts`, `collect-news.test.ts`, `collection-log.ts`
+- ❌ Bad: `newsCollectionService.ts`, `collectNews.test.ts`, `collectionLog.ts`
+
+This convention applies to all files including:
+- Source files (`.ts`, `.tsx`)
+- Test files (`.test.ts`, `.test.tsx`)
+- GraphQL type definitions
+- Service files
+- Utility files

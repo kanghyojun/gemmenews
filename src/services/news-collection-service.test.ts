@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import type { CollectionResult, OverallCollectionResult } from './newsCollectionService';
+import type { CollectionResult, OverallCollectionResult } from './news-collection-service';
 
 describe('News Collection Service Types', () => {
   describe('CollectionResult', () => {
@@ -92,7 +92,7 @@ describe('News Collection Service Types', () => {
 describe('News Collection Service Functions', () => {
   describe('collectFromSource', () => {
     it('should be defined and exported', async () => {
-      const { collectFromSource } = await import('./newsCollectionService');
+      const { collectFromSource } = await import('./news-collection-service');
       expect(collectFromSource).toBeDefined();
       expect(typeof collectFromSource).toBe('function');
     });
@@ -100,7 +100,7 @@ describe('News Collection Service Functions', () => {
 
   describe('collectAllNews', () => {
     it('should be defined and exported', async () => {
-      const { collectAllNews } = await import('./newsCollectionService');
+      const { collectAllNews } = await import('./news-collection-service');
       expect(collectAllNews).toBeDefined();
       expect(typeof collectAllNews).toBe('function');
     });

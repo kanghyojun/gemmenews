@@ -1,5 +1,5 @@
 import { builder } from '../builder';
-import { CollectionLog } from '../types/collectionLog';
+import { CollectionLog } from '../types/collection-log';
 import { CollectionLogs } from '../../../drizzle/schema';
 import { db } from '../../api/db';
 import { eq, desc } from 'drizzle-orm';
