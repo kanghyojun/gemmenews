@@ -2,18 +2,24 @@ import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import solid from 'eslint-plugin-solid/configs/typescript';
 import importPlugin from 'eslint-plugin-import';
+import prettierConfig from 'eslint-config-prettier';
+import prettierPlugin from 'eslint-plugin-prettier';
 
 export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
+  prettierConfig,
   {
     files: ['**/*.{ts,tsx}'],
     ...solid,
     plugins: {
       ...solid.plugins,
       import: importPlugin,
+      prettier: prettierPlugin,
     },
     rules: {
+      // Prettier
+      'prettier/prettier': 'error',
       // TypeScript rules
       '@typescript-eslint/no-unused-vars': ['error', {
         argsIgnorePattern: '^_',

@@ -1,63 +1,51 @@
-"use server";
-import { redirect } from "@solidjs/router";
-import { useSession } from "vinxi/http";
-import { eq } from "drizzle-orm";
-import { db } from "./db";
-import { Users } from "@/schema";
+'use server';
+import { redirect } from '@solidjs/router';
+import { useSession } from 'vinxi/http';
+import { eq } from 'drizzle-orm';
+import { db } from '~/lib/db';
+import { Users } from '@/schema';
 
 function validateUsername(username: unknown) {
-  if (typeof username !== "string" || username.length < 3) {
+  if (typeof username !== 'string' || username.length < 3) {
     return `Usernames must be at least 3 characters long`;
   }
 }
 
 function validatePassword(password: unknown) {
-  if (typeof password !== "string" || password.length < 6) {
+  if (typeof password !== 'string' || password.length < 6) {
     return `Passwords must be at least 6 characters long`;
   }
 }
 
 async function login(username: string, password: string) {
-  const users = await db
-    .select()
-    .from(Users)
-    .where(eq(Users.username, username));
+  const users = await db.select().from(Users).where(eq(Users.username, username));
   const user = users[0];
-  if (!user || password !== user.password) throw new Error("Invalid login");
+  if (!user || password !== user.password) throw new Error('Invalid login');
   return user;
 }
 
 async function register(username: string, password: string) {
-  const existingUsers = await db
-    .select()
-    .from(Users)
-    .where(eq(Users.username, username));
-  if (existingUsers.length > 0) throw new Error("User already exists");
-  const result = await db
-    .insert(Users)
-    .values({ username, password })
-    .returning();
+  const existingUsers = await db.select().from(Users).where(eq(Users.username, username));
+  if (existingUsers.length > 0) throw new Error('User already exists');
+  const result = await db.insert(Users).values({ username, password }).returning();
   return result[0];
 }
 
 function getSession() {
   return useSession({
-    password:
-      process.env.SESSION_SECRET ?? "areallylongsecretthatyoushouldreplace",
+    password: process.env.SESSION_SECRET ?? 'areallylongsecretthatyoushouldreplace',
   });
 }
 
 export async function loginOrRegister(formData: FormData) {
-  const username = String(formData.get("username"));
-  const password = String(formData.get("password"));
-  const loginType = String(formData.get("loginType"));
+  const username = String(formData.get('username'));
+  const password = String(formData.get('password'));
+  const loginType = String(formData.get('loginType'));
   const error = validateUsername(username) || validatePassword(password);
   if (error) return new Error(error);
 
   try {
-    const user = await (loginType !== "login"
-      ? register(username, password)
-      : login(username, password));
+    const user = await (loginType !== 'login' ? register(username, password) : login(username, password));
     const session = await getSession();
     await session.update((d) => {
       d.userId = user.id;
@@ -65,24 +53,24 @@ export async function loginOrRegister(formData: FormData) {
   } catch (err) {
     return err as Error;
   }
-  throw redirect("/");
+  throw redirect('/');
 }
 
 export async function logout() {
   const session = await getSession();
   await session.update((d) => (d.userId = undefined));
-  throw redirect("/login");
+  throw redirect('/login');
 }
 
 export async function getUser() {
   const session = await getSession();
   const userId = session.data.userId;
-  if (userId === undefined) throw redirect("/login");
+  if (userId === undefined) throw redirect('/login');
 
   try {
     const users = await db.select().from(Users).where(eq(Users.id, userId));
     const user = users[0];
-    if (!user) throw redirect("/login");
+    if (!user) throw redirect('/login');
     return { id: user.id, username: user.username };
   } catch {
     throw logout();

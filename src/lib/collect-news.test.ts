@@ -1,13 +1,13 @@
-import { describe, it, expect, beforeEach, vi, afterEach } from "vitest";
-import { collectNews } from "./collect-news";
-import { db } from "./db";
-import { Crawler } from "./crawl";
+import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
+import { collectNews } from './collect-news';
+import { db } from './db';
+import { Crawler } from './crawl';
 
 // Mocking
-vi.mock("./db");
-vi.mock("./crawl");
+vi.mock('./db');
+vi.mock('./crawl');
 
-describe("collectNews", () => {
+describe('collectNews', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -16,7 +16,7 @@ describe("collectNews", () => {
     vi.restoreAllMocks();
   });
 
-  it("활성화된 뉴스 소스가 없으면 빈 배열을 반환한다", async () => {
+  it('활성화된 뉴스 소스가 없으면 빈 배열을 반환한다', async () => {
     // Given: 활성화된 소스가 없음
     vi.mocked(db.select).mockReturnValue({
       from: vi.fn().mockReturnValue({
@@ -31,36 +31,36 @@ describe("collectNews", () => {
     expect(results).toEqual([]);
   });
 
-  it("오늘 이미 수집된 소스는 건너뛴다", async () => {
+  it('오늘 이미 수집된 소스는 건너뛴다', async () => {
     // Given: 활성화된 소스 2개, 그 중 1개는 오늘 이미 수집됨
     const mockSources = [
       {
         id: 1,
-        name: "Test Source 1",
-        code: "test1",
-        baseUrl: "https://test1.com",
+        name: 'Test Source 1',
+        code: 'test1',
+        baseUrl: 'https://test1.com',
         config: {
-          itemSelector: "tr.athing",
+          itemSelector: 'tr.athing',
           itemRelations: {
-            title: "find(.titleline).text()",
-            url: "find(.titleline a).attr(href)",
+            title: 'find(.titleline).text()',
+            url: 'find(.titleline a).attr(href)',
           },
-          contentSelector: ".content",
+          contentSelector: '.content',
         },
         isActive: true,
       },
       {
         id: 2,
-        name: "Test Source 2",
-        code: "test2",
-        baseUrl: "https://test2.com",
+        name: 'Test Source 2',
+        code: 'test2',
+        baseUrl: 'https://test2.com',
         config: {
-          itemSelector: "article",
+          itemSelector: 'article',
           itemRelations: {
-            title: "find(h2).text()",
-            url: "find(a).attr(href)",
+            title: 'find(h2).text()',
+            url: 'find(a).attr(href)',
           },
-          contentSelector: ".body",
+          contentSelector: '.body',
         },
         isActive: true,
       },
@@ -71,7 +71,7 @@ describe("collectNews", () => {
         id: 1,
         sourceId: 1,
         startedAt: new Date(),
-        status: "in_progress",
+        status: 'in_progress',
       },
     ];
 
@@ -112,7 +112,7 @@ describe("collectNews", () => {
             id: 2,
             sourceId: 2,
             startedAt: new Date(),
-            status: "in_progress",
+            status: 'in_progress',
           },
         ]),
       }),
@@ -126,10 +126,9 @@ describe("collectNews", () => {
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
     // Mock crawler
-    const mockList = vi.fn().mockResolvedValue([{ url: "https://test2.com/article1", title: "Test Article 1" }]);
+    const mockList = vi.fn().mockResolvedValue([{ url: 'https://test2.com/article1', title: 'Test Article 1' }]);
 
     vi.mocked(Crawler).mockImplementation(function (this: any) {
-      // eslint-disable-line @typescript-eslint/no-explicit-any
       this.list = mockList;
       this.getContent = vi.fn();
       return this;
@@ -141,24 +140,24 @@ describe("collectNews", () => {
     // Then
     expect(results).toHaveLength(1);
     expect(results[0].sourceId).toBe(2);
-    expect(results[0].sourceName).toBe("Test Source 2");
-    expect(results[0].status).toBe("success");
+    expect(results[0].sourceName).toBe('Test Source 2');
+    expect(results[0].status).toBe('success');
   });
 
-  it("크롤링 성공 시 기사를 저장하고 로그를 업데이트한다", async () => {
+  it('크롤링 성공 시 기사를 저장하고 로그를 업데이트한다', async () => {
     // Given
     const mockSource = {
       id: 1,
-      name: "Test Source",
-      code: "test",
-      baseUrl: "https://test.com",
+      name: 'Test Source',
+      code: 'test',
+      baseUrl: 'https://test.com',
       config: {
-        itemSelector: "tr",
+        itemSelector: 'tr',
         itemRelations: {
-          title: "find(.title).text()",
-          url: "find(a).attr(href)",
+          title: 'find(.title).text()',
+          url: 'find(a).attr(href)',
         },
-        contentSelector: ".content",
+        contentSelector: '.content',
       },
       isActive: true,
     };
@@ -199,19 +198,18 @@ describe("collectNews", () => {
             id: 1,
             sourceId: 1,
             startedAt: new Date(),
-            status: "in_progress",
+            status: 'in_progress',
           },
         ]),
       }),
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
     const mockList = vi.fn().mockResolvedValue([
-      { url: "https://test.com/article1", title: "Article 1" },
-      { url: "https://test.com/article2", title: "Article 2" },
+      { url: 'https://test.com/article1', title: 'Article 1' },
+      { url: 'https://test.com/article2', title: 'Article 2' },
     ]);
 
     vi.mocked(Crawler).mockImplementation(function (this: any) {
-      // eslint-disable-line @typescript-eslint/no-explicit-any
       this.list = mockList;
       this.getContent = vi.fn();
       return this;
@@ -232,26 +230,26 @@ describe("collectNews", () => {
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({
       sourceId: 1,
-      sourceName: "Test Source",
+      sourceName: 'Test Source',
       articlesCollected: 2,
-      status: "success",
+      status: 'success',
     });
   });
 
-  it("URL 중복 시 기사를 건너뛴다", async () => {
+  it('URL 중복 시 기사를 건너뛴다', async () => {
     // Given
     const mockSource = {
       id: 1,
-      name: "Test Source",
-      code: "test",
-      baseUrl: "https://test.com",
+      name: 'Test Source',
+      code: 'test',
+      baseUrl: 'https://test.com',
       config: {
-        itemSelector: "tr",
+        itemSelector: 'tr',
         itemRelations: {
-          title: "find(.title).text()",
-          url: "find(a).attr(href)",
+          title: 'find(.title).text()',
+          url: 'find(a).attr(href)',
         },
-        contentSelector: ".content",
+        contentSelector: '.content',
       },
       isActive: true,
     };
@@ -278,7 +276,7 @@ describe("collectNews", () => {
         return {
           from: vi.fn().mockReturnValue({
             where: vi.fn().mockReturnValue({
-              limit: vi.fn().mockResolvedValue([{ id: 100, url: "https://test.com/article1" }]),
+              limit: vi.fn().mockResolvedValue([{ id: 100, url: 'https://test.com/article1' }]),
             }),
           }),
         } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
@@ -301,19 +299,18 @@ describe("collectNews", () => {
             id: 1,
             sourceId: 1,
             startedAt: new Date(),
-            status: "in_progress",
+            status: 'in_progress',
           },
         ]),
       }),
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
     const mockList = vi.fn().mockResolvedValue([
-      { url: "https://test.com/article1", title: "Duplicate Article" },
-      { url: "https://test.com/article2", title: "New Article" },
+      { url: 'https://test.com/article1', title: 'Duplicate Article' },
+      { url: 'https://test.com/article2', title: 'New Article' },
     ]);
 
     vi.mocked(Crawler).mockImplementation(function (this: any) {
-      // eslint-disable-line @typescript-eslint/no-explicit-any
       this.list = mockList;
       this.getContent = vi.fn();
       return this;
@@ -333,20 +330,20 @@ describe("collectNews", () => {
     expect(results[0].articlesCollected).toBe(1); // Only one new article
   });
 
-  it("크롤링 실패 시 에러를 로그에 기록한다", async () => {
+  it('크롤링 실패 시 에러를 로그에 기록한다', async () => {
     // Given
     const mockSource = {
       id: 1,
-      name: "Test Source",
-      code: "test",
-      baseUrl: "https://test.com",
+      name: 'Test Source',
+      code: 'test',
+      baseUrl: 'https://test.com',
       config: {
-        itemSelector: "tr",
+        itemSelector: 'tr',
         itemRelations: {
-          title: "find(.title).text()",
-          url: "find(a).attr(href)",
+          title: 'find(.title).text()',
+          url: 'find(a).attr(href)',
         },
-        contentSelector: ".content",
+        contentSelector: '.content',
       },
       isActive: true,
     };
@@ -376,16 +373,15 @@ describe("collectNews", () => {
             id: 1,
             sourceId: 1,
             startedAt: new Date(),
-            status: "in_progress",
+            status: 'in_progress',
           },
         ]),
       }),
     } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
-    const mockList = vi.fn().mockRejectedValue(new Error("Network error"));
+    const mockList = vi.fn().mockRejectedValue(new Error('Network error'));
 
     vi.mocked(Crawler).mockImplementation(function (this: any) {
-      // eslint-disable-line @typescript-eslint/no-explicit-any
       this.list = mockList;
       this.getContent = vi.fn();
       return this;
@@ -406,10 +402,10 @@ describe("collectNews", () => {
     expect(results).toHaveLength(1);
     expect(results[0]).toEqual({
       sourceId: 1,
-      sourceName: "Test Source",
+      sourceName: 'Test Source',
       articlesCollected: 0,
-      status: "failed",
-      errorMessage: "Network error",
+      status: 'failed',
+      errorMessage: 'Network error',
     });
   });
 });

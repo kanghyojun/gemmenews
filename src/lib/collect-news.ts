@@ -1,7 +1,7 @@
-import { db } from "./db";
-import { NewsSources, Articles, CollectionLogs } from "@/schema";
-import { eq, and, gte, lt } from "drizzle-orm";
-import { Crawler, CrawlerConfig } from "./crawl";
+import { db } from './db';
+import { NewsSources, Articles, CollectionLogs } from '@/schema';
+import { eq, and, gte, lt } from 'drizzle-orm';
+import { Crawler, CrawlerConfig } from './crawl';
 
 /**
  * 뉴스 수집 결과 인터페이스
@@ -10,7 +10,7 @@ export interface CollectionResult {
   sourceId: number;
   sourceName: string;
   articlesCollected: number;
-  status: "success" | "failed";
+  status: 'success' | 'failed';
   errorMessage?: string;
 }
 
@@ -42,7 +42,7 @@ export async function collectNews(): Promise<CollectionResult[]> {
     const activeSources = await db.select().from(NewsSources).where(eq(NewsSources.isActive, true));
 
     if (activeSources.length === 0) {
-      console.log("활성화된 뉴스 소스가 없습니다.");
+      console.log('활성화된 뉴스 소스가 없습니다.');
       return results;
     }
 
@@ -58,11 +58,11 @@ export async function collectNews(): Promise<CollectionResult[]> {
 
     // 3. 아직 수집되지 않은 소스만 필터링
     const sourcesToCollect = activeSources.filter(
-      (source: typeof NewsSources.$inferSelect) => !loggedSourceIds.has(source.id),
+      (source: typeof NewsSources.$inferSelect) => !loggedSourceIds.has(source.id)
     );
 
     if (sourcesToCollect.length === 0) {
-      console.log("오늘 수집할 새로운 소스가 없습니다.");
+      console.log('오늘 수집할 새로운 소스가 없습니다.');
       return results;
     }
 
@@ -76,10 +76,10 @@ export async function collectNews(): Promise<CollectionResult[]> {
           .values({
             sourceId: source.id,
             startedAt: now,
-            status: "in_progress",
+            status: 'in_progress',
           })
-          .returning(),
-      ),
+          .returning()
+      )
     );
 
     const logMap = new Map<number, number>();
@@ -139,7 +139,7 @@ export async function collectNews(): Promise<CollectionResult[]> {
             // 개별 기사 등록 실패는 로깅하고 계속 진행
             console.warn(
               `[${source.name}] 기사 등록 실패 (${item.url}):`,
-              error instanceof Error ? error.message : String(error),
+              error instanceof Error ? error.message : String(error)
             );
           }
         }
@@ -151,7 +151,7 @@ export async function collectNews(): Promise<CollectionResult[]> {
           .update(CollectionLogs)
           .set({
             completedAt: new Date(),
-            status: "success",
+            status: 'success',
           })
           .where(eq(CollectionLogs.id, logId));
 
@@ -159,7 +159,7 @@ export async function collectNews(): Promise<CollectionResult[]> {
           sourceId: source.id,
           sourceName: source.name,
           articlesCollected: successCount,
-          status: "success",
+          status: 'success',
         });
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : String(error);
@@ -170,7 +170,7 @@ export async function collectNews(): Promise<CollectionResult[]> {
           .update(CollectionLogs)
           .set({
             completedAt: new Date(),
-            status: "failed",
+            status: 'failed',
             errorMessage,
           })
           .where(eq(CollectionLogs.id, logId));
@@ -179,7 +179,7 @@ export async function collectNews(): Promise<CollectionResult[]> {
           sourceId: source.id,
           sourceName: source.name,
           articlesCollected: 0,
-          status: "failed",
+          status: 'failed',
           errorMessage,
         });
       }
@@ -187,7 +187,7 @@ export async function collectNews(): Promise<CollectionResult[]> {
 
     return results;
   } catch (error) {
-    console.error("뉴스 수집 중 치명적인 오류 발생:", error);
+    console.error('뉴스 수집 중 치명적인 오류 발생:', error);
     throw error;
   }
 }

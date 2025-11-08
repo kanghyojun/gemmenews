@@ -8,9 +8,7 @@ describe('collectNews Mutation', () => {
 
     expect(collectNewsField).toBeDefined();
     expect(collectNewsField?.type.toString()).toContain('CollectionResult');
-    expect(collectNewsField?.description).toBe(
-      '모든 활성 뉴스 소스에서 기사를 수집합니다.'
-    );
+    expect(collectNewsField?.description).toBe('모든 활성 뉴스 소스에서 기사를 수집합니다.');
   });
 
   it('should have no arguments', () => {

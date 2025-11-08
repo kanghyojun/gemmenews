@@ -48,11 +48,7 @@ function generateMockArticles(sourceCode: string, count: number) {
 export async function collectFromSource(sourceId: number): Promise<CollectionResult> {
   try {
     // 뉴스 소스 정보 조회
-    const [source] = await db
-      .select()
-      .from(NewsSources)
-      .where(eq(NewsSources.id, sourceId))
-      .execute();
+    const [source] = await db.select().from(NewsSources).where(eq(NewsSources.id, sourceId)).execute();
 
     if (!source) {
       throw new Error(`News source with id ${sourceId} not found`);
@@ -77,20 +73,19 @@ export async function collectFromSource(sourceId: number): Promise<CollectionRes
     for (const article of mockArticles) {
       try {
         // URL 중복 체크
-        const existing = await db
-          .select()
-          .from(Articles)
-          .where(eq(Articles.url, article.url))
-          .execute();
+        const existing = await db.select().from(Articles).where(eq(Articles.url, article.url)).execute();
 
         if (existing.length === 0) {
-          await db.insert(Articles).values({
-            sourceId: source.id,
-            title: article.title,
-            url: article.url,
-            content: article.content,
-            originalPublishedAt: article.originalPublishedAt,
-          }).execute();
+          await db
+            .insert(Articles)
+            .values({
+              sourceId: source.id,
+              title: article.title,
+              url: article.url,
+              content: article.content,
+              originalPublishedAt: article.originalPublishedAt,
+            })
+            .execute();
           savedCount++;
         }
       } catch (error) {
@@ -140,11 +135,7 @@ export async function collectAllNews(): Promise<OverallCollectionResult> {
     logId = log.id;
 
     // 활성 뉴스 소스 조회
-    const activeSources = await db
-      .select()
-      .from(NewsSources)
-      .where(eq(NewsSources.isActive, true))
-      .execute();
+    const activeSources = await db.select().from(NewsSources).where(eq(NewsSources.isActive, true)).execute();
 
     if (activeSources.length === 0) {
       // 활성 소스가 없는 경우
@@ -173,19 +164,22 @@ export async function collectAllNews(): Promise<OverallCollectionResult> {
       results.push(result);
 
       // 개별 소스 수집 로그 생성
-      await db.insert(CollectionLogs).values({
-        sourceId: source.id,
-        startedAt: new Date(),
-        completedAt: new Date(),
-        status: result.success ? 'success' : 'failed',
-        articlesCollected: result.articlesCollected,
-        errorMessage: result.errorMessage,
-      }).execute();
+      await db
+        .insert(CollectionLogs)
+        .values({
+          sourceId: source.id,
+          startedAt: new Date(),
+          completedAt: new Date(),
+          status: result.success ? 'success' : 'failed',
+          articlesCollected: result.articlesCollected,
+          errorMessage: result.errorMessage,
+        })
+        .execute();
     }
 
     // 전체 결과 집계
     const totalArticles = results.reduce((sum, r) => sum + r.articlesCollected, 0);
-    const allSuccess = results.every(r => r.success);
+    const allSuccess = results.every((r) => r.success);
 
     // 전체 수집 로그 업데이트
     await db
