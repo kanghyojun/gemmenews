@@ -1,4 +1,4 @@
-import { db } from '../api/db';
+import { db } from '~/lib/db';
 import { NewsSources, Articles, CollectionLogs } from '@/schema';
 import { eq } from 'drizzle-orm';
 
@@ -45,7 +45,7 @@ function generateMockArticles(sourceCode: string, count: number) {
 /**
  * 특정 소스에서 뉴스 수집 (Mock)
  */
-export async function collectFromSource(sourceId: number): Promise<CollectionResult> {
+export async function collectFromSource(sourceId: number, collectionLogId: number): Promise<CollectionResult> {
   try {
     // 뉴스 소스 정보 조회
     const [source] = await db.select().from(NewsSources).where(eq(NewsSources.id, sourceId)).execute();
@@ -80,6 +80,7 @@ export async function collectFromSource(sourceId: number): Promise<CollectionRes
             .insert(Articles)
             .values({
               sourceId: source.id,
+              collectionLogId,
               title: article.title,
               url: article.url,
               content: article.content,
@@ -127,7 +128,6 @@ export async function collectAllNews(): Promise<OverallCollectionResult> {
         sourceId: null, // null = 전체 수집
         startedAt,
         status: 'in_progress',
-        articlesCollected: 0,
       })
       .returning()
       .execute();
@@ -144,7 +144,6 @@ export async function collectAllNews(): Promise<OverallCollectionResult> {
         .set({
           completedAt: new Date(),
           status: 'success',
-          articlesCollected: 0,
         })
         .where(eq(CollectionLogs.id, logId))
         .execute();
@@ -160,20 +159,29 @@ export async function collectAllNews(): Promise<OverallCollectionResult> {
     // 각 소스에서 수집
     const results: CollectionResult[] = [];
     for (const source of activeSources) {
-      const result = await collectFromSource(source.id);
-      results.push(result);
-
       // 개별 소스 수집 로그 생성
-      await db
+      const [sourceLog] = await db
         .insert(CollectionLogs)
         .values({
           sourceId: source.id,
           startedAt: new Date(),
+          status: 'in_progress',
+        })
+        .returning()
+        .execute();
+
+      const result = await collectFromSource(source.id, sourceLog.id);
+      results.push(result);
+
+      // 개별 소스 수집 로그 업데이트
+      await db
+        .update(CollectionLogs)
+        .set({
           completedAt: new Date(),
           status: result.success ? 'success' : 'failed',
-          articlesCollected: result.articlesCollected,
           errorMessage: result.errorMessage,
         })
+        .where(eq(CollectionLogs.id, sourceLog.id))
         .execute();
     }
 
@@ -187,7 +195,6 @@ export async function collectAllNews(): Promise<OverallCollectionResult> {
       .set({
         completedAt: new Date(),
         status: allSuccess ? 'success' : 'failed',
-        articlesCollected: totalArticles,
       })
       .where(eq(CollectionLogs.id, logId))
       .execute();
