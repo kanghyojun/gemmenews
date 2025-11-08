@@ -1,10 +1,10 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { collectNews, CollectionResult } from './collect-news';
-import { db } from '../api/db';
+import { collectNews } from './collect-news';
+import { db } from './db';
 import { Crawler } from './crawl';
 
 // Mocking
-vi.mock('../api/db');
+vi.mock('./db');
 vi.mock('./crawl');
 
 describe('collectNews', () => {
@@ -22,7 +22,7 @@ describe('collectNews', () => {
       from: vi.fn().mockReturnValue({
         where: vi.fn().mockResolvedValue([]),
       }),
-    } as any);
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
     // When
     const results = await collectNews();
@@ -84,14 +84,14 @@ describe('collectNews', () => {
           from: vi.fn().mockReturnValue({
             where: vi.fn().mockResolvedValue(mockSources),
           }),
-        } as any;
+        } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
       } else if (selectCallCount === 2) {
         // Check today's logs
         return {
           from: vi.fn().mockReturnValue({
             where: vi.fn().mockResolvedValue(mockTodayLogs),
           }),
-        } as any;
+        } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
       } else {
         // Check for duplicate URLs (no duplicates)
         return {
@@ -100,7 +100,7 @@ describe('collectNews', () => {
               limit: vi.fn().mockResolvedValue([]),
             }),
           }),
-        } as any;
+        } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
       }
     });
 
@@ -116,26 +116,24 @@ describe('collectNews', () => {
           },
         ]),
       }),
-    } as any);
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
     // Mock update
     vi.mocked(db.update).mockReturnValue({
       set: vi.fn().mockReturnValue({
         where: vi.fn().mockResolvedValue(undefined),
       }),
-    } as any);
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
     // Mock crawler
-    const mockList = vi.fn().mockResolvedValue([
-      { url: 'https://test2.com/article1', title: 'Test Article 1' },
-    ]);
+    const mockList = vi.fn().mockResolvedValue([{ url: 'https://test2.com/article1', title: 'Test Article 1' }]);
 
-    vi.mocked(Crawler).mockImplementation(
-      function (this: any, _url: string, _config: any) {
-        this.list = mockList;
-        return this;
-      } as any
-    );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    vi.mocked(Crawler).mockImplementation(function (this: any) {
+      this.list = mockList;
+      this.getContent = vi.fn();
+      return this;
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
     // When
     const results = await collectNews();
@@ -174,14 +172,14 @@ describe('collectNews', () => {
           from: vi.fn().mockReturnValue({
             where: vi.fn().mockResolvedValue([mockSource]),
           }),
-        } as any;
+        } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
       } else if (selectCallCount === 2) {
         // Check today's logs (no logs)
         return {
           from: vi.fn().mockReturnValue({
             where: vi.fn().mockResolvedValue([]),
           }),
-        } as any;
+        } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
       } else {
         // Check for duplicate URLs (no duplicates)
         return {
@@ -190,7 +188,7 @@ describe('collectNews', () => {
               limit: vi.fn().mockResolvedValue([]),
             }),
           }),
-        } as any;
+        } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
       }
     });
 
@@ -205,19 +203,19 @@ describe('collectNews', () => {
           },
         ]),
       }),
-    } as any);
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
     const mockList = vi.fn().mockResolvedValue([
       { url: 'https://test.com/article1', title: 'Article 1' },
       { url: 'https://test.com/article2', title: 'Article 2' },
     ]);
 
-    vi.mocked(Crawler).mockImplementation(
-      function (this: any, _url: string, _config: any) {
-        this.list = mockList;
-        return this;
-      } as any
-    );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    vi.mocked(Crawler).mockImplementation(function (this: any) {
+      this.list = mockList;
+      this.getContent = vi.fn();
+      return this;
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
     const mockUpdate = vi.fn().mockReturnValue({
       where: vi.fn().mockResolvedValue(undefined),
@@ -225,7 +223,7 @@ describe('collectNews', () => {
 
     vi.mocked(db.update).mockReturnValue({
       set: mockUpdate,
-    } as any);
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
     // When
     const results = await collectNews();
@@ -267,25 +265,23 @@ describe('collectNews', () => {
           from: vi.fn().mockReturnValue({
             where: vi.fn().mockResolvedValue([mockSource]),
           }),
-        } as any;
+        } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
       } else if (selectCallCount === 2) {
         // Check today's logs
         return {
           from: vi.fn().mockReturnValue({
             where: vi.fn().mockResolvedValue([]),
           }),
-        } as any;
+        } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
       } else if (selectCallCount === 3) {
         // First URL check - duplicate
         return {
           from: vi.fn().mockReturnValue({
             where: vi.fn().mockReturnValue({
-              limit: vi
-                .fn()
-                .mockResolvedValue([{ id: 100, url: 'https://test.com/article1' }]),
+              limit: vi.fn().mockResolvedValue([{ id: 100, url: 'https://test.com/article1' }]),
             }),
           }),
-        } as any;
+        } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
       } else {
         // Second URL check - not duplicate
         return {
@@ -294,7 +290,7 @@ describe('collectNews', () => {
               limit: vi.fn().mockResolvedValue([]),
             }),
           }),
-        } as any;
+        } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
       }
     });
 
@@ -309,25 +305,25 @@ describe('collectNews', () => {
           },
         ]),
       }),
-    } as any);
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
     const mockList = vi.fn().mockResolvedValue([
       { url: 'https://test.com/article1', title: 'Duplicate Article' },
       { url: 'https://test.com/article2', title: 'New Article' },
     ]);
 
-    vi.mocked(Crawler).mockImplementation(
-      function (this: any, _url: string, _config: any) {
-        this.list = mockList;
-        return this;
-      } as any
-    );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    vi.mocked(Crawler).mockImplementation(function (this: any) {
+      this.list = mockList;
+      this.getContent = vi.fn();
+      return this;
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
     vi.mocked(db.update).mockReturnValue({
       set: vi.fn().mockReturnValue({
         where: vi.fn().mockResolvedValue(undefined),
       }),
-    } as any);
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
     // When
     const results = await collectNews();
@@ -363,13 +359,13 @@ describe('collectNews', () => {
           from: vi.fn().mockReturnValue({
             where: vi.fn().mockResolvedValue([mockSource]),
           }),
-        } as any;
+        } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
       } else {
         return {
           from: vi.fn().mockReturnValue({
             where: vi.fn().mockResolvedValue([]),
           }),
-        } as any;
+        } as any; // eslint-disable-line @typescript-eslint/no-explicit-any
       }
     });
 
@@ -384,16 +380,16 @@ describe('collectNews', () => {
           },
         ]),
       }),
-    } as any);
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
     const mockList = vi.fn().mockRejectedValue(new Error('Network error'));
 
-    vi.mocked(Crawler).mockImplementation(
-      function (this: any, _url: string, _config: any) {
-        this.list = mockList;
-        return this;
-      } as any
-    );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    vi.mocked(Crawler).mockImplementation(function (this: any) {
+      this.list = mockList;
+      this.getContent = vi.fn();
+      return this;
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
     const mockSet = vi.fn().mockReturnValue({
       where: vi.fn().mockResolvedValue(undefined),
@@ -401,7 +397,7 @@ describe('collectNews', () => {
 
     vi.mocked(db.update).mockReturnValue({
       set: mockSet,
-    } as any);
+    } as any); // eslint-disable-line @typescript-eslint/no-explicit-any
 
     // When
     const results = await collectNews();

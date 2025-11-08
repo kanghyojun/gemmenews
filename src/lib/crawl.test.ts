@@ -1,9 +1,9 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { Crawler } from "./crawl";
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { Crawler } from './crawl';
 
 // Mock fetch globally
-const mockFetch = vi.fn();
-global.fetch = mockFetch as any;
+const mockFetch = vi.fn<typeof fetch>();
+global.fetch = mockFetch;
 
 // 실제 Hacker News HTML (2025-11-06 크롤링)
 const MOCK_HN_LIST_HTML = `
@@ -21,7 +21,7 @@ const MOCK_HN_ITEM_HTML = `
 </table>
 `;
 
-describe("Crawler", () => {
+describe('Crawler', () => {
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -30,53 +30,50 @@ describe("Crawler", () => {
     vi.restoreAllMocks();
   });
 
-  describe("constructor", () => {
-    it("should create a crawler instance with url and config separated", () => {
-      const crawler = new Crawler("https://example.com", {
-        itemSelector: ".item",
+  describe('constructor', () => {
+    it('should create a crawler instance with url and config separated', () => {
+      const crawler = new Crawler('https://example.com', {
+        itemSelector: '.item',
         itemRelations: {
-          title: "find(.title).text()",
-          url: "find(.link).attr(href)",
+          title: 'find(.title).text()',
+          url: 'find(.link).attr(href)',
         },
-        contentSelector: ".content",
+        contentSelector: '.content',
       });
 
       expect(crawler).toBeInstanceOf(Crawler);
     });
   });
 
-  describe("list() - Hacker News real HTML", () => {
-    it("should crawl HN with relation-based selectors (user specification)", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: async () => MOCK_HN_LIST_HTML,
-      });
+  describe('list() - Hacker News real HTML', () => {
+    it('should crawl HN with relation-based selectors (user specification)', async () => {
+      mockFetch.mockResolvedValueOnce(new Response(MOCK_HN_LIST_HTML, { status: 200 }));
 
-      const crawler = new Crawler("https://news.ycombinator.com", {
-        itemSelector: "tr.athing",
+      const crawler = new Crawler('https://news.ycombinator.com', {
+        itemSelector: 'tr.athing',
         itemRelations: {
-          title: "find(span.titleline a).text()",
-          url: "next().find(span.subline a).last().attr(href)",
+          title: 'find(span.titleline a).text()',
+          url: 'next().find(span.subline a).last().attr(href)',
         },
-        contentSelector: "div.toptext",
+        contentSelector: 'div.toptext',
       });
 
       const items = await crawler.list();
 
       expect(items).toHaveLength(2);
       expect(items[0]).toEqual({
-        title: "Ratatui – App Showcase",
-        url: "https://news.ycombinator.com/item?id=45830829",
+        title: 'Ratatui – App Showcase',
+        url: 'https://news.ycombinator.com/item?id=45830829',
       });
       expect(items[1]).toEqual({
-        title: "End of Japanese community",
-        url: "https://news.ycombinator.com/item?id=45830770",
+        title: 'End of Japanese community',
+        url: 'https://news.ycombinator.com/item?id=45830770',
       });
     });
   });
 
-  describe("list() - Simple structure", () => {
-    it("should crawl simple container structure", async () => {
+  describe('list() - Simple structure', () => {
+    it('should crawl simple container structure', async () => {
       const mockHTML = `
         <article class="post">
           <h2 class="title">Title 1</h2>
@@ -88,103 +85,89 @@ describe("Crawler", () => {
         </article>
       `;
 
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: async () => mockHTML,
-      });
+      mockFetch.mockResolvedValueOnce(new Response(mockHTML, { status: 200 }));
 
-      const crawler = new Crawler("https://example.com", {
-        itemSelector: "article.post",
+      const crawler = new Crawler('https://example.com', {
+        itemSelector: 'article.post',
         itemRelations: {
-          title: "find(h2.title).text()",
-          url: "find(a.link).attr(href)",
+          title: 'find(h2.title).text()',
+          url: 'find(a.link).attr(href)',
         },
-        contentSelector: ".content",
+        contentSelector: '.content',
       });
 
       const result = await crawler.list();
 
       expect(result).toHaveLength(2);
       expect(result[0]).toEqual({
-        title: "Title 1",
-        url: "https://example.com/article1",
+        title: 'Title 1',
+        url: 'https://example.com/article1',
       });
       expect(result[1]).toEqual({
-        title: "Title 2",
-        url: "https://example.com/article2",
+        title: 'Title 2',
+        url: 'https://example.com/article2',
       });
     });
 
-    it("should throw error when fetch fails", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: false,
-        status: 404,
-      });
+    it('should throw error when fetch fails', async () => {
+      mockFetch.mockResolvedValueOnce(new Response(null, { status: 404 }));
 
-      const crawler = new Crawler("https://example.com", {
-        itemSelector: ".item",
+      const crawler = new Crawler('https://example.com', {
+        itemSelector: '.item',
         itemRelations: {
-          title: "find(.title).text()",
-          url: "find(.link).attr(href)",
+          title: 'find(.title).text()',
+          url: 'find(.link).attr(href)',
         },
-        contentSelector: ".content",
+        contentSelector: '.content',
       });
 
-      await expect(crawler.list()).rejects.toThrow("Failed to crawl list");
+      await expect(crawler.list()).rejects.toThrow('Failed to crawl list');
     });
   });
 
-  describe("getContent()", () => {
-    it("should extract content from HN item page", async () => {
+  describe('getContent()', () => {
+    it('should extract content from HN item page', async () => {
       // URL에 따라 다른 mock HTML 반환
-      mockFetch.mockImplementation((url: string) => {
-        if (url.includes("item?id=")) {
+      mockFetch.mockImplementation((input: string | URL | Request) => {
+        const url = typeof input === 'string' ? input : input instanceof URL ? input.href : input.url;
+        if (url.includes('item?id=')) {
           // item 페이지 요청
-          return Promise.resolve({
-            ok: true,
-            text: async () => MOCK_HN_ITEM_HTML,
-          });
+          return Promise.resolve(new Response(MOCK_HN_ITEM_HTML, { status: 200 }));
         } else {
           // 목록 페이지 요청
-          return Promise.resolve({
-            ok: true,
-            text: async () => MOCK_HN_LIST_HTML,
-          });
+          return Promise.resolve(new Response(MOCK_HN_LIST_HTML, { status: 200 }));
         }
       });
 
-      const crawler = new Crawler("https://news.ycombinator.com", {
-        itemSelector: "tr.athing",
+      const crawler = new Crawler('https://news.ycombinator.com', {
+        itemSelector: 'tr.athing',
         itemRelations: {
-          title: "find(span.titleline a).text()",
-          url: "next().find(span.subline a).last().attr(href)",
+          title: 'find(span.titleline a).text()',
+          url: 'next().find(span.subline a).last().attr(href)',
         },
-        contentSelector: "div.toptext",
+        contentSelector: 'div.toptext',
       });
 
       const content = await crawler.getContent((await crawler.list())[0].url);
 
-      expect(content).toContain("hello world");
+      expect(content).toContain('hello world');
     });
 
-    it("should throw error when content not found", async () => {
-      mockFetch.mockResolvedValueOnce({
-        ok: true,
-        text: async () => "<html><body>No content</body></html>",
-      });
+    it('should throw error when content not found', async () => {
+      mockFetch.mockResolvedValueOnce(new Response('<html><body>No content</body></html>', { status: 200 }));
 
-      const crawler = new Crawler("https://example.com", {
-        itemSelector: ".item",
+      const crawler = new Crawler('https://example.com', {
+        itemSelector: '.item',
         itemRelations: {
-          title: "find(.title).text()",
-          url: "find(.link).attr(href)",
+          title: 'find(.title).text()',
+          url: 'find(.link).attr(href)',
         },
-        contentSelector: ".content",
+        contentSelector: '.content',
       });
 
-      await expect(
-        crawler.getContent("https://example.com/article"),
-      ).rejects.toThrow("Content not found with the given selector");
+      await expect(crawler.getContent('https://example.com/article')).rejects.toThrow(
+        'Content not found with the given selector'
+      );
     });
   });
 });

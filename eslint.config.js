@@ -1,14 +1,25 @@
 import js from '@eslint/js';
 import tseslint from 'typescript-eslint';
 import solid from 'eslint-plugin-solid/configs/typescript';
+import importPlugin from 'eslint-plugin-import';
+import prettierConfig from 'eslint-config-prettier';
+import prettierPlugin from 'eslint-plugin-prettier';
 
 export default tseslint.config(
   js.configs.recommended,
   ...tseslint.configs.recommended,
+  prettierConfig,
   {
     files: ['**/*.{ts,tsx}'],
     ...solid,
+    plugins: {
+      ...solid.plugins,
+      import: importPlugin,
+      prettier: prettierPlugin,
+    },
     rules: {
+      // Prettier
+      'prettier/prettier': 'error',
       // TypeScript rules
       '@typescript-eslint/no-unused-vars': ['error', {
         argsIgnorePattern: '^_',
@@ -20,6 +31,15 @@ export default tseslint.config(
       'solid/reactivity': 'warn',
       'solid/no-destructure': 'warn',
       'solid/prefer-for': 'warn',
+
+      // Import rules
+      'import/no-relative-parent-imports': 'off', // We'll use a custom depth check instead
+      'no-restricted-imports': ['error', {
+        patterns: [{
+          group: ['**/../../*'],
+          message: 'Deep relative imports (3+ levels) are not allowed. Use path aliases instead: @/* for drizzle/, ~/* for src/'
+        }]
+      }],
 
       // General best practices
       'no-console': 'off',

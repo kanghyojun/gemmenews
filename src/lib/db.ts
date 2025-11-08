@@ -1,6 +1,6 @@
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { Pool } from 'pg';
-import * as schema from '../../drizzle/schema';
+import * as schema from '@/schema';
 import { config } from 'dotenv';
 
 // Load environment variables (.env.local overrides .env)

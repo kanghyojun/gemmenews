@@ -116,5 +116,34 @@ This design allows adding new news sources by configuring selectors without code
   - Use `await db.select()...` and access first element with `[0]`
   - Do NOT use `.get()` method (not available in PostgreSQL dialect)
 - Test environment uses `happy-dom` for DOM simulation
-- Path aliases: `~` for `src/`, `@` for `drizzle/` (configured in vitest.config.ts)
+- Path aliases: `~` for `src/`, `@` for `drizzle/` (configured in tsconfig.json)
 - TypeScript: `skipLibCheck: true` to avoid external library type errors
+
+### Import Guidelines
+
+**Use path aliases for deep imports**:
+- ✅ Good: `import { Users } from '@/schema'` (alias for drizzle/)
+- ✅ Good: `import { db } from '~/api/db'` (alias for src/)
+- ❌ Bad: `import { Users } from '../../../drizzle/schema'` (3+ levels of `../`)
+
+**When to use relative vs absolute imports**:
+- Use **relative imports** for nearby files (same directory or 1-2 levels up): `'./types'`, `'../utils'`
+- Use **path aliases** (`@/` or `~/`) when going 3+ levels up: `'@/schema'` instead of `'../../../drizzle/schema'`
+- Path aliases improve readability and make refactoring easier
+
+**Available path aliases**:
+- `@/*` → `drizzle/*` (database schema)
+- `~/*` → `src/*` (source code)
+
+### File Naming Convention
+
+**Use kebab-case (hyphen-separated) for all file names**:
+- ✅ Good: `news-collection-service.ts`, `collect-news.test.ts`, `collection-log.ts`
+- ❌ Bad: `newsCollectionService.ts`, `collectNews.test.ts`, `collectionLog.ts`
+
+This convention applies to all files including:
+- Source files (`.ts`, `.tsx`)
+- Test files (`.test.ts`, `.test.tsx`)
+- GraphQL type definitions
+- Service files
+- Utility files
