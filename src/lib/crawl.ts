@@ -1,4 +1,5 @@
 import * as cheerio from 'cheerio';
+import type { AnyNode } from 'domhandler';
 
 /**
  * 관계형 선택자 경로
@@ -119,7 +120,7 @@ export class Crawler {
    * @param path 선택자 경로
    * @returns 추출된 값
    */
-  private executeSelectorPath($: cheerio.CheerioAPI, $element: cheerio.Cheerio<any>, path: SelectorPath): string {
+  private executeSelectorPath($: cheerio.CheerioAPI, $element: cheerio.Cheerio<AnyNode>, path: SelectorPath): string {
     // 체인 메서드를 파싱
     // 예: "next().find(.subline a).last().attr(href)"
     const methodRegex = /(\w+)\(([^)]*)\)/g;
