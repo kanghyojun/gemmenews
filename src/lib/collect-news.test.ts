@@ -128,6 +128,7 @@ describe('collectNews', () => {
     // Mock crawler
     const mockList = vi.fn().mockResolvedValue([{ url: 'https://test2.com/article1', title: 'Test Article 1' }]);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     vi.mocked(Crawler).mockImplementation(function (this: any) {
       this.list = mockList;
       this.getContent = vi.fn();
@@ -209,6 +210,7 @@ describe('collectNews', () => {
       { url: 'https://test.com/article2', title: 'Article 2' },
     ]);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     vi.mocked(Crawler).mockImplementation(function (this: any) {
       this.list = mockList;
       this.getContent = vi.fn();
@@ -310,6 +312,7 @@ describe('collectNews', () => {
       { url: 'https://test.com/article2', title: 'New Article' },
     ]);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     vi.mocked(Crawler).mockImplementation(function (this: any) {
       this.list = mockList;
       this.getContent = vi.fn();
@@ -381,6 +384,7 @@ describe('collectNews', () => {
 
     const mockList = vi.fn().mockRejectedValue(new Error('Network error'));
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     vi.mocked(Crawler).mockImplementation(function (this: any) {
       this.list = mockList;
       this.getContent = vi.fn();
