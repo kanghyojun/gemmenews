@@ -1,14 +1,17 @@
 import { builder } from './builder';
 
 // Types import
-import './types/collectionResult';
-import './types/collectionLog';
+import './types/collection-result';
+import './types/collection-log';
+import './types/news-source';
+import './types/news-item';
 
 // Queries import
-import './queries/collectionLogs';
+import './queries/collection-logs';
+import './queries/news-list';
 
 // Mutations import
-import './mutations/collectNews';
+import './mutations/collect-news';
 
 /**
  * GraphQL 스키마 빌드

@@ -19,6 +19,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.1",
     "@types/cheerio": "^0.22.35",
+    "@types/domhandler": "^3.1.0",
     "@types/node": "^24.7.0",
     "@types/pg": "^8.11.10",
     "@vitest/ui": "^4.0.7",
@@ -39,6 +40,7 @@
     "@pothos/plugin-drizzle": "^0.10.0",
     "@solidjs/router": "^0.15.0",
     "@solidjs/start": "^1.1.0",
+    "domhandler": "^5.0.3",
     "dotenv": "^17.2.3",
     "drizzle-orm": "1.0.0-beta.1-dfa4db3",
     "graphql": "^16.9.0",

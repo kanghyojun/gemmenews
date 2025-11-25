@@ -20,6 +20,9 @@ importers:
       '@solidjs/start':
         specifier: ^1.1.0
         version: 1.2.0(solid-js@1.9.10)(vinxi@0.5.8(@types/node@24.10.0)(db0@0.3.4(drizzle-orm@1.0.0-beta.1-dfa4db3(@types/pg@8.15.6)(pg@8.16.3)))(drizzle-orm@1.0.0-beta.1-dfa4db3(@types/pg@8.15.6)(pg@8.16.3))(ioredis@5.8.2)(jiti@2.6.1)(terser@5.44.1))(vite@7.2.1(@types/node@24.10.0)(jiti@2.6.1)(terser@5.44.1))
+      domhandler:
+        specifier: ^5.0.3
+        version: 5.0.3
       dotenv:
         specifier: ^17.2.3
         version: 17.2.3
@@ -48,6 +51,9 @@ importers:
       '@types/cheerio':
         specifier: ^0.22.35
         version: 0.22.35
+      '@types/domhandler':
+        specifier: ^3.1.0
+        version: 3.1.0
       '@types/node':
         specifier: ^24.7.0
         version: 24.10.0
@@ -1092,6 +1098,10 @@ packages:
 
   '@types/deep-eql@4.0.2':
     resolution: {integrity: sha512-c9h9dVVMigMPc4bwTvC5dxqtqJZwQPePsWjPlpSOnojbor6pGqdk541lfA7AqFQr5pB1BRdq0juY9db81BwyFw==}
+
+  '@types/domhandler@3.1.0':
+    resolution: {integrity: sha512-3AOfYUR/uv83OKeNzeJimXt6NRk/eCHkfOPp5Q8yX7ceE/WxxyDgEWnKb+b54bqVZmgjxMZLtWKDdmmREpZjTA==}
+    deprecated: This is a stub types definition. domhandler provides its own type definitions, so you do not need this installed.
 
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
@@ -4960,6 +4970,10 @@ snapshots:
       '@types/node': 24.10.0
 
   '@types/deep-eql@4.0.2': {}
+
+  '@types/domhandler@3.1.0':
+    dependencies:
+      domhandler: 5.0.3
 
   '@types/estree@1.0.8': {}
 

@@ -31,6 +31,7 @@ export const Articles = pgTable('articles', {
   title: text('title').notNull(),
   url: text('url').notNull().unique(), // 중복 방지
   content: text('content'), // 본문 내용
+  isRead: boolean('is_read').notNull().default(false), // 읽음 여부
   originalPublishedAt: timestamp('original_published_at', {
     withTimezone: true,
   }), // 원본 게시일 (옵션)
