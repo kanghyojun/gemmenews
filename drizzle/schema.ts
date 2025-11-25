@@ -34,6 +34,7 @@ export const Articles = pgTable('articles', {
   originalPublishedAt: timestamp('original_published_at', {
     withTimezone: true,
   }), // 원본 게시일 (옵션)
+  isRead: boolean('is_read').notNull().default(false), // 읽음 여부
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
 });
 
