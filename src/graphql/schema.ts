@@ -1,18 +1,13 @@
 import { builder } from './builder';
 
-// Types import
 import './types/collectionResult';
 import './types/collectionLog';
+import './types/news-source';
+import './types/news-item';
 
-// Queries import
 import './queries/collectionLogs';
+import './queries/news-list';
 
-// Mutations import
 import './mutations/collectNews';
 
-/**
- * GraphQL 스키마 빌드
- *
- * 모든 타입, 쿼리, 뮤테이션을 포함한 최종 스키마
- */
 export const schema = builder.toSchema();
